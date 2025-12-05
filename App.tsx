@@ -5,6 +5,7 @@ import { Canvas } from './components/Canvas';
 import { ConfigDrawer } from './components/ConfigDrawer';
 import { NodeData, Connection, NodeType, TargetType, AIQuestionType, BranchType, Branch } from './types';
 import { INITIAL_NODES, INITIAL_CONNECTIONS, generateId, DEFAULT_BRANCHES_SCRM, DEFAULT_BRANCH_START, DEFAULT_BRANCH_CONDITION_ELSE } from './constants';
+import { Save } from 'lucide-react';
 
 export default function App() {
   const [nodes, setNodes] = useState<NodeData[]>(INITIAL_NODES);
@@ -124,13 +125,25 @@ export default function App() {
 
   const handleSave = () => {
     console.log("Configuration Saved", { nodes, connections });
-    setDrawerOpen(false);
+    // In a real app, this would make an API call
+    alert("流程配置已保存！");
   };
 
   const selectedNode = nodes.find(n => n.id === selectedNodeId) || null;
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden text-slate-800 font-sans">
+    <div className="flex h-screen w-screen overflow-hidden text-slate-800 font-sans relative">
+      {/* Global Save Button */}
+      <div className="absolute top-4 right-6 z-50">
+        <button 
+          onClick={handleSave}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg font-medium transition-all"
+        >
+          <Save size={18} />
+          <span>保存流程配置</span>
+        </button>
+      </div>
+
       <Sidebar 
         nodes={nodes}
         selectedNodeId={selectedNodeId}

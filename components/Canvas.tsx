@@ -88,14 +88,6 @@ export const Canvas: React.FC<CanvasProps> = ({
     if (e.ctrlKey || e.metaKey || true) { // Always zoom on wheel for this requirement
       const zoomSensitivity = 0.001;
       const newScale = Math.min(Math.max(0.1, scale - e.deltaY * zoomSensitivity), 5);
-      
-      // Zoom towards mouse pointer logic could be added here, 
-      // but for simplicity we'll just zoom based on center or current view.
-      // A simple implementation of centering zoom on mouse is complex without careful math.
-      // We will stick to simple scaling for now or a centered approach.
-      // To improve, we can adjust pan to keep mouse pos stable.
-      
-      // Simple zoom:
       setScale(newScale);
     }
   };
@@ -342,6 +334,14 @@ export const Canvas: React.FC<CanvasProps> = ({
           }
 
           // --- Render Guide Node ---
+          // Helper to get specific content for Target Type display
+          const getTargetContent = () => {
+            if (node.targetType === TargetType.SCRM) return node.targetConfig?.scrmActivityId || '未配置ID';
+            if (node.targetType === TargetType.CHAT) return node.targetConfig?.chatField || '未配置字段';
+            if (node.targetType === TargetType.PMS) return node.targetConfig?.pmsTag || '未配置标签';
+            return '';
+          };
+
           return (
             <div
               key={node.id}
@@ -368,9 +368,16 @@ export const Canvas: React.FC<CanvasProps> = ({
                 </div>
 
                 <div className="text-xs space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">目标类型:</span>
-                    <span className="font-medium text-blue-600 bg-blue-50 px-1.5 rounded">{TargetTypeLabel[node.targetType || TargetType.SCRM]}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500 shrink-0">目标:</span>
+                    <div className="flex items-center gap-1 overflow-hidden justify-end">
+                       <span className="font-medium text-blue-600 bg-blue-50 px-1.5 rounded whitespace-nowrap">
+                         {TargetTypeLabel[node.targetType || TargetType.SCRM]}
+                       </span>
+                       <span className="text-gray-600 truncate max-w-[120px]" title={getTargetContent()}>
+                         {getTargetContent()}
+                       </span>
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">AI提问:</span>
